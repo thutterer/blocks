@@ -1,0 +1,10 @@
+canvas {
+  /* height and width cannot be styled here!
+     see http://stackoverflow.com/q/6757861/3449673
+  */
+  background-color: gray;
+}
+
+#score {
+  width: 200px;
+}
