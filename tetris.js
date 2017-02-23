@@ -11,6 +11,7 @@ var timestep;   // Time between calls to gameStep()
 var score;      // Player's score
 var level;      // Current level
 var paused;     // Game pause state
+var gameover;   // Gameover state
 
 /************************************************
 Initialize the drawing canvas
@@ -41,6 +42,7 @@ function initialize() {
     //Start the game timer
     timestep = 1000;
     paused = false;
+    gameover = false;
     clearInterval(timer);
     timer = setInterval(function(){gameStep()}, timestep);
 }
@@ -360,6 +362,13 @@ function setGrid(x, y, t) {
 Responds to a key press event
 *************************************************/
 function keyDown(e) {
+
+    // Any key to restart from gameover mode
+    if(gameover) {
+      initialize();
+      return;
+    }
+
     // No controls in pause mode
     if(paused && e.keyCode != 80) return;
 
@@ -409,8 +418,8 @@ function keyDown(e) {
 Updates the game state at regular intervals
 *************************************************/
 function gameStep() {
-    //Do nothing while in Pause-Mode
-    if(paused) return;
+    //Do nothing while in pause or gameover mode
+    if(paused || gameover) return;
     //Erase the current tetrimino
     drawTetrimino(x,y,t,o,0);
     //Check if the tetrimino can be dropped 1 block
@@ -435,8 +444,7 @@ function gameStep() {
             o = o2;
         }
         else {
-            alert("Game Over");
-            initialize();
+            setAndDrawGameover();
             return;
         }
     }
@@ -500,4 +508,14 @@ function drawPaused() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("PAUSED", 60, 190);
+}
+
+/*************************************************
+Sets gameover state and draws its text
+*************************************************/
+function setAndDrawGameover() {
+  gameover = true;
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("GAME OVER", 50, 190);
 }
