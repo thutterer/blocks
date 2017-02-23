@@ -37,7 +37,7 @@ function initialize() {
     drawGrid();
     score = 0;
     level = 1;
-    updateScoreAndLevel();
+    drawScoreAndLevel();
     //Start the game timer
     timestep = 1000;
     paused = false;
@@ -65,10 +65,8 @@ y = [0,19]  y-coordinate
 t = [0,7]   block type
 ************************************************/
 function drawBlock(x, y, t) {
-
     //Check if a block needs to be drawn
     if(t > 0) {
-
         //Get the block color
         var c;
         if(t == 1)        //I type
@@ -85,26 +83,19 @@ function drawBlock(x, y, t) {
             c = 280;    //Purple
         else            //Z type
             c = 0;        //Red
-
         //Convert game coordinaes to pixel coordinates
         pixelX = x*20;
         pixelY = (19-y)*20;
 
-
         /**** Draw the center part of the block ****/
-
         //Set the fill color using the supplied color
         ctx.fillStyle = "hsl(" + c + ",100%,50%)";
-
         //Create a filled rectangle
         ctx.fillRect(pixelX+2,pixelY+2,16,16);
 
-
         /**** Draw the top part of the block ****/
-
         //Set the fill color slightly lighter
         ctx.fillStyle = "hsl(" + c + ",100%,70%)";
-
         //Create the top polygon and fill it
         ctx.beginPath();
         ctx.moveTo(pixelX,pixelY);
@@ -113,12 +104,9 @@ function drawBlock(x, y, t) {
         ctx.lineTo(pixelX+2,pixelY+2);
         ctx.fill();
 
-
         /**** Draw the sides of the block ****/
-
         //Set the fill color slightly darker
         ctx.fillStyle = "hsl(" + c + ",100%,40%)";
-
         //Create the left polygon and fill it
         ctx.beginPath();
         ctx.moveTo(pixelX,pixelY);
@@ -135,12 +123,9 @@ function drawBlock(x, y, t) {
         ctx.lineTo(pixelX+18,pixelY+2);
         ctx.fill();
 
-
         /**** Draw the bottom part of the block ****/
-
         //Set the fill color much darker
         ctx.fillStyle = "hsl(" + c + ",100%,30%)";
-
         //Create the bottom polygon and fill it
         ctx.beginPath();
         ctx.moveTo(pixelX,pixelY+20);
@@ -416,6 +401,7 @@ function keyDown(e) {
     drawTetrimino(x,y,t,o,1);
     //Redraw the grid
     drawGrid();
+    drawScoreAndLevel();
     if(paused) drawPaused();
 }
 
@@ -458,6 +444,7 @@ function gameStep() {
     drawTetrimino(x,y,t,o,1);
     //Redraw the grid
     drawGrid();
+    drawScoreAndLevel();
 }
 
 /*************************************************
@@ -481,8 +468,6 @@ function checkLines() {
                 clearInterval(timer);
                 timer = setInterval(function(){gameStep()}, timestep);
             }
-            //Update score and level display
-            updateScoreAndLevel();
             //Loop over the remaining lines
             for(ii = i; ii < 19; ii++) {
                 //Copy each line from the line above
@@ -499,13 +484,18 @@ function checkLines() {
 }
 
 /*************************************************
-Updates the score and level
+Draws the current score and level
 *************************************************/
-function updateScoreAndLevel() {
-  document.getElementById("score").innerHTML = "Score: " + score;
-  document.getElementById("level").innerHTML = "Level: " + level;
+function drawScoreAndLevel() {
+  ctx.font = "10px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("Score: " + score, 5, 15);
+  ctx.fillText("Level: " + level, 5, 30);
 }
 
+/*************************************************
+Draws text for paused mode
+*************************************************/
 function drawPaused() {
   ctx.font = "20px Arial";
   ctx.fillStyle = "white";
