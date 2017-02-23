@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
 canvas {
   /* height and width cannot be styled here!
      see http://stackoverflow.com/q/6757861/3449673

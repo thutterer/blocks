@@ -6,6 +6,10 @@ var t;          // Tetrimino type
 var x, y;       // Tetrimino position
 var o;          // Tetrimino orientation
 
+var canvasWidth;    // Calculated canvas width in pixel
+var canvasHeight;   // Calculated canvas height in pixel
+var blockSize;      // Calculated block size in pixel
+
 var timer;      // Game timer
 var timestep;   // Time between calls to gameStep()
 var score;      // Player's score
@@ -13,10 +17,27 @@ var level;      // Current level
 var paused;     // Game pause state
 var gameover;   // Gameover state
 
+function scaleCanvas() {
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+
+  if(width < height/2) {  // width is the limiting factor
+    canvasWidth = width;
+    canvasHeight = width * 2;
+  }
+  else {                  // height is the limiting factor
+    canvasHeight = height;
+    canvasWidth = height/2
+  }
+  blockSize = canvasWidth/10;
+  document.getElementById("myCanvas").height = canvasHeight;
+  document.getElementById("myCanvas").width = canvasWidth;
+}
 /************************************************
 Initialize the drawing canvas
 ************************************************/
 function initialize() {
+    scaleCanvas();
     //Get the canvas context object from the body
     c = document.getElementById("myCanvas");
     ctx = c.getContext("2d");
@@ -52,7 +73,7 @@ Draws the current game state grid
 ************************************************/
 function drawGrid() {
     //Clear the canvas
-    ctx.clearRect(0,0,200,400);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     //Loop over each grid cell
     for(i = 0; i < 20; i++) {
         for(j = 0; j < 10; j++)
@@ -86,24 +107,24 @@ function drawBlock(x, y, t) {
         else            //Z type
             c = 0;        //Red
         //Convert game coordinaes to pixel coordinates
-        pixelX = x*20;
-        pixelY = (19-y)*20;
+        pixelX = x*blockSize;
+        pixelY = (19-y)*blockSize;
 
         /**** Draw the center part of the block ****/
         //Set the fill color using the supplied color
         ctx.fillStyle = "hsl(" + c + ",100%,50%)";
         //Create a filled rectangle
-        ctx.fillRect(pixelX+2,pixelY+2,16,16);
+        ctx.fillRect(pixelX+2, pixelY+2, blockSize-2, blockSize-2);
 
         /**** Draw the top part of the block ****/
         //Set the fill color slightly lighter
         ctx.fillStyle = "hsl(" + c + ",100%,70%)";
         //Create the top polygon and fill it
         ctx.beginPath();
-        ctx.moveTo(pixelX,pixelY);
-        ctx.lineTo(pixelX+20,pixelY);
-        ctx.lineTo(pixelX+18,pixelY+2);
-        ctx.lineTo(pixelX+2,pixelY+2);
+        ctx.moveTo(pixelX, pixelY);
+        ctx.lineTo(pixelX+blockSize, pixelY);
+        ctx.lineTo(pixelX+blockSize-2,pixelY+2);
+        ctx.lineTo(pixelX+2, pixelY+2);
         ctx.fill();
 
         /**** Draw the sides of the block ****/
@@ -111,18 +132,18 @@ function drawBlock(x, y, t) {
         ctx.fillStyle = "hsl(" + c + ",100%,40%)";
         //Create the left polygon and fill it
         ctx.beginPath();
-        ctx.moveTo(pixelX,pixelY);
-        ctx.lineTo(pixelX,pixelY+20);
-        ctx.lineTo(pixelX+2,pixelY+18);
+        ctx.moveTo(pixelX, pixelY);
+        ctx.lineTo(pixelX, pixelY+blockSize);
+        ctx.lineTo(pixelX+2,pixelY+blockSize-2);
         ctx.lineTo(pixelX+2,pixelY+2);
         ctx.fill();
 
         //Create the right polygon and fill it
         ctx.beginPath();
-        ctx.moveTo(pixelX+20,pixelY);
-        ctx.lineTo(pixelX+20,pixelY+20);
-        ctx.lineTo(pixelX+18,pixelY+18);
-        ctx.lineTo(pixelX+18,pixelY+2);
+        ctx.moveTo(pixelX+blockSize, pixelY);
+        ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
+        ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
+        ctx.lineTo(pixelX+blockSize-2, pixelY+2);
         ctx.fill();
 
         /**** Draw the bottom part of the block ****/
@@ -130,10 +151,10 @@ function drawBlock(x, y, t) {
         ctx.fillStyle = "hsl(" + c + ",100%,30%)";
         //Create the bottom polygon and fill it
         ctx.beginPath();
-        ctx.moveTo(pixelX,pixelY+20);
-        ctx.lineTo(pixelX+20,pixelY+20);
-        ctx.lineTo(pixelX+18,pixelY+18);
-        ctx.lineTo(pixelX+2,pixelY+18);
+        ctx.moveTo(pixelX, pixelY+blockSize);
+        ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
+        ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
+        ctx.lineTo(pixelX+2,pixelY+blockSize-2);
         ctx.fill();
     }
 }
@@ -495,27 +516,30 @@ function checkLines() {
 Draws the current score and level
 *************************************************/
 function drawScoreAndLevel() {
-  ctx.font = "10px Arial";
+  var fontSize = Math.floor(canvasHeight/50);
+  ctx.font = fontSize + "px Courier";
   ctx.fillStyle = "white";
-  ctx.fillText("Score: " + score, 5, 15);
-  ctx.fillText("Level: " + level, 5, 30);
+  ctx.fillText("Score: " + score, 5, fontSize*1.25);
+  ctx.fillText("Level: " + level, 5, fontSize*2.5);
 }
 
 /*************************************************
 Draws text for paused mode
 *************************************************/
 function drawPaused() {
-  ctx.font = "20px Arial";
+  var fontSize = Math.floor(canvasHeight/20);
+  ctx.font = fontSize + "px Courier";
   ctx.fillStyle = "white";
-  ctx.fillText("PAUSED", 60, 190);
+  ctx.fillText("PAUSED", canvasWidth/4, canvasHeight/2-fontSize/2);
 }
 
 /*************************************************
 Sets gameover state and draws its text
 *************************************************/
 function setAndDrawGameover() {
+  var fontSize = Math.floor(canvasHeight/20);
   gameover = true;
-  ctx.font = "20px Arial";
+  ctx.font = fontSize + "px Courier";
   ctx.fillStyle = "white";
-  ctx.fillText("GAME OVER", 50, 190);
+  ctx.fillText("GAME OVER", canvasWidth/5, canvasHeight/2-fontSize/2);
 }
