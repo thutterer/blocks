@@ -10,6 +10,7 @@ var timer;      // Game timer
 var timestep;   // Time between calls to gameStep()
 var score;      // Player's score
 var level;      // Current level
+var paused;     // Game pause state
 
 /************************************************
 Initialize the drawing canvas
@@ -37,8 +38,9 @@ function initialize() {
     score = 0;
     level = 1;
     updateScoreAndLevel();
-    timestep = 1000;
     //Start the game timer
+    timestep = 1000;
+    paused = false;
     clearInterval(timer);
     timer = setInterval(function(){gameStep()}, timestep);
 }
@@ -47,10 +49,8 @@ function initialize() {
 Draws the current game state grid
 ************************************************/
 function drawGrid() {
-
     //Clear the canvas
     ctx.clearRect(0,0,200,400);
-
     //Loop over each grid cell
     for(i = 0; i < 20; i++) {
         for(j = 0; j < 10; j++)
@@ -375,6 +375,8 @@ function setGrid(x, y, t) {
 Responds to a key press event
 *************************************************/
 function keyDown(e) {
+    // No controls in pause mode
+    if(paused && e.keyCode != 80) return;
 
     if(e.keyCode == 37) { //Left arrow
         drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
@@ -396,31 +398,33 @@ function keyDown(e) {
     }
     else if(e.keyCode == 40) { //Down arrow
         drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        y2 = y - 1;
-        if(drawTetrimino(x,y2,t,o,-1)) //Check if valid
-            y = y2;
+        o2 = (o + 3) % 4;
+        if(drawTetrimino(x,y,t,o2,-1)) //Check if valid
+            o = o2;
     }
     else if(e.keyCode == 32) { //Space-bar
         drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-
         //Move down until invalid
         while(drawTetrimino(x,y-1,t,o,-1))
             y -= 1;
-
         gameStep();
     }
-
+    else if(e.keyCode == 80) { //p key
+        paused = !paused;
+    }
     //Draw the current tetrimino
     drawTetrimino(x,y,t,o,1);
-
     //Redraw the grid
     drawGrid();
+    if(paused) drawPaused();
 }
 
 /*************************************************
 Updates the game state at regular intervals
 *************************************************/
 function gameStep() {
+    //Do nothing while in Pause-Mode
+    if(paused) return;
     //Erase the current tetrimino
     drawTetrimino(x,y,t,o,0);
     //Check if the tetrimino can be dropped 1 block
@@ -500,4 +504,10 @@ Updates the score and level
 function updateScoreAndLevel() {
   document.getElementById("score").innerHTML = "Score: " + score;
   document.getElementById("level").innerHTML = "Level: " + level;
+}
+
+function drawPaused() {
+  ctx.font = "20px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("PAUSED", 60, 190);
 }
