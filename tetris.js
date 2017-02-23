@@ -17,6 +17,9 @@ var level;      // Current level
 var paused;     // Game pause state
 var gameover;   // Gameover state
 
+/************************************************
+Scale the drawing canvas to fit into window
+************************************************/
 function scaleCanvas() {
   var width = window.innerWidth;
   var height = window.innerHeight;
@@ -32,7 +35,10 @@ function scaleCanvas() {
   blockSize = canvasWidth/10;
   document.getElementById("myCanvas").height = canvasHeight;
   document.getElementById("myCanvas").width = canvasWidth;
+  document.getElementById("myCanvas").style.marginTop = (height-canvasHeight)/2+"px";
+  document.getElementById("myCanvas").style.marginLeft = (width-canvasWidth)/2+"px";
 }
+
 /************************************************
 Initialize the drawing canvas
 ************************************************/
@@ -383,13 +389,11 @@ function setGrid(x, y, t) {
 Responds to a key press event
 *************************************************/
 function keyDown(e) {
-
     // Any key to restart from gameover mode
     if(gameover) {
       initialize();
       return;
     }
-
     // No controls in pause mode
     if(paused && e.keyCode != 80) return;
 
