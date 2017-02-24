@@ -1,4 +1,9 @@
+html {
+  height: 100%;
+}
+
 body {
+  height: 100%;
   margin: 0;
   overflow: hidden;
   background-color: black;
@@ -19,8 +24,14 @@ canvas {
   border-radius: 2px;
 }
 
+a, a:visited {
+  text-decoration: none;
+  color: white;
+}
+
 #menu {
   width: 100%;
+  height: 100%;
   font-size: 500%;
 }
 
@@ -33,13 +44,19 @@ canvas {
   padding: 50px;
 }
 
+#footer {
+  position: fixed;
+  width: 100%;
+  font-size: 40%;
+  bottom: 0px;
+}
+
 .clickable {
   cursor: pointer;
   padding: 10px;
 }
 
 .clickable:hover {
-  font-stretch: extra-expanded;
   color: yellow;
 }
 
