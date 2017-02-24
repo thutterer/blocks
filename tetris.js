@@ -51,11 +51,14 @@ function scaleCanvas() {
 
 function addTouchListener() {
   detectTouch(document.body, function(gesture) {
+    if(gameover) { startGame(); return; }
+    if(paused && gesture != 'long_touch_top') return;
     if     (gesture == 'touch_left')  inputMoveLeft();
     else if(gesture == 'touch_right') inputMoveRight();
     else if(gesture == 'swipe_up'   || gesture == 'swipe_left')   inputRotateLeft();
     else if(gesture == 'swipe_down' || gesture == 'swipe_right')  inputRotateRight();
-    else if(gesture == 'long_touch')  inputDrop();
+    else if(gesture == 'long_touch_bottom')  inputDrop();
+    else if(gesture == 'long_touch_top')  togglePause();
     redrawAfterInput();
   });
 }
@@ -108,7 +111,7 @@ function detectTouch(el, callback){
           gesture = (distY < 0)? 'swipe_up' : 'swipe_down' // if dist traveled is negative, it indicates up swipe
         }
       }
-      else gesture = 'long_touch';
+      else gesture = startY < window.innerHeight/2 ? 'long_touch_top' : 'long_touch_bottom';
       handletouch(gesture)
       e.preventDefault()
     }, false)
@@ -460,6 +463,7 @@ function setGrid(x, y, t) {
 Responds to a key press event
 *************************************************/
 function keyDown(e) {
+  e.preventDefault();
   // any key to restart from gameover mode
   if(gameover) {
     startGame();
@@ -473,7 +477,7 @@ function keyDown(e) {
   else if(e.keyCode == 39) inputMoveRight();   // right arrow
   else if(e.keyCode == 40) inputRotateRight(); // down arrow
   else if(e.keyCode == 32) inputDrop();        // space-bar
-  else if(e.keyCode == 80) paused = !paused;   // p-key
+  else if(e.keyCode == 80) togglePause();      // p-key
   redrawAfterInput();
 }
 
@@ -511,6 +515,10 @@ function inputDrop() {
   while(drawTetrimino(x,y-1,t,o,-1))
     y -= 1;
     gameStep();
+}
+
+function togglePause() {
+  paused = !paused;
 }
 
 function redrawAfterInput() {
