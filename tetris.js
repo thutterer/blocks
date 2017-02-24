@@ -76,8 +76,8 @@ function addTouchListener() {
     else if(gesture == 'touch_right') inputMoveRight();
     else if(gesture == 'swipe_up'   || gesture == 'swipe_left')   inputRotateLeft();
     else if(gesture == 'swipe_down' || gesture == 'swipe_right')  inputRotateRight();
-    else if(gesture == 'long_touch_bottom')  inputDrop();
-    else if(gesture == 'long_touch_top')  togglePause();
+    else if(gesture == 'touch_bottom')  inputDrop();
+    else if(gesture == 'long_touch')  togglePause();
     redrawAfterInput();
   });
 }
@@ -125,7 +125,8 @@ function detectTouch(el, callback){
       elapsedTime = new Date().getTime() - startTime // get time elapsed
       if (elapsedTime <= allowedTime) {
         if (Math.abs(distX) < threshold && Math.abs(distY) < restraint){ // small distance means touch
-          gesture = startX < window.innerWidth/2 ? 'touch_left' : 'touch_right'
+          if(startY > window.innerHeight*3/4) gesture = 'touch_bottom';
+          else gesture = startX < window.innerWidth/2 ? 'touch_left' : 'touch_right';
         }
         else if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){ // condition for horizontal swipe met
           gesture = (distX < 0)? 'swipe_left' : 'swipe_right' // if dist traveled is negative, it indicates left swipe
@@ -134,7 +135,7 @@ function detectTouch(el, callback){
           gesture = (distY < 0)? 'swipe_up' : 'swipe_down' // if dist traveled is negative, it indicates up swipe
         }
       }
-      else gesture = startY < window.innerHeight/2 ? 'long_touch_top' : 'long_touch_bottom';
+      else gesture = 'long_touch';  //startY < window.innerHeight/2 ? 'long_touch_top' : 'long_touch_bottom';
       handletouch(gesture)
       e.preventDefault()
     }, false)
