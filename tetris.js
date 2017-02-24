@@ -18,6 +18,16 @@ var paused;     // Game pause state
 var gameover;   // Gameover state
 
 /************************************************
+Initialize the drawing canvas and start the game
+************************************************/
+function initialize() {
+    scaleCanvas();
+    addTouchListener();
+    ctx = document.getElementById("myCanvas").getContext("2d");
+    startGame();
+}
+
+/************************************************
 Scale the drawing canvas to fit into window
 ************************************************/
 function scaleCanvas() {
@@ -39,14 +49,16 @@ function scaleCanvas() {
   document.getElementById("myCanvas").style.marginLeft = (width-canvasWidth)/2+"px";
 }
 
+function addTouchListener() {
+  document.getElementById("myCanvas").addEventListener('touchstart', function(e) {
+    inputDrop();
+  }, false);
+}
+
 /************************************************
-Initialize the drawing canvas
+Reset everything to (re)start the game
 ************************************************/
-function initialize() {
-    scaleCanvas();
-    //Get the canvas context object from the body
-    c = document.getElementById("myCanvas");
-    ctx = c.getContext("2d");
+function startGame() {
     //Initialize tetrimino variables
     t = 1 + Math.floor((Math.random()*7));
     x = 4;
@@ -389,54 +401,61 @@ function setGrid(x, y, t) {
 Responds to a key press event
 *************************************************/
 function keyDown(e) {
-    // Any key to restart from gameover mode
-    if(gameover) {
-      initialize();
-      return;
-    }
-    // No controls in pause mode
-    if(paused && e.keyCode != 80) return;
+  // any key to restart from gameover mode
+  if(gameover) {
+    startGame();
+    return;
+  }
+  // no controls in pause mode
+  if(paused && e.keyCode != 80) return;
 
-    if(e.keyCode == 37) { //Left arrow
-        drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        x2 = x - 1;
-        if(drawTetrimino(x2,y,t,o,-1)) //Check if valid
-            x = x2;
-    }
-    else if(e.keyCode == 38) { //Up arrow
-        drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        o2 = (o + 1) % 4;
-        if(drawTetrimino(x,y,t,o2,-1)) //Check if valid
-            o = o2;
-    }
-    else if(e.keyCode == 39) { //Right arrow
-        drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        x2 = x + 1;
-        if(drawTetrimino(x2,y,t,o,-1)) //Check if valid
-            x = x2;
-    }
-    else if(e.keyCode == 40) { //Down arrow
-        drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        o2 = (o + 3) % 4;
-        if(drawTetrimino(x,y,t,o2,-1)) //Check if valid
-            o = o2;
-    }
-    else if(e.keyCode == 32) { //Space-bar
-        drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
-        //Move down until invalid
-        while(drawTetrimino(x,y-1,t,o,-1))
-            y -= 1;
-        gameStep();
-    }
-    else if(e.keyCode == 80) { //p key
-        paused = !paused;
-    }
-    //Draw the current tetrimino
-    drawTetrimino(x,y,t,o,1);
-    //Redraw the grid
-    drawGrid();
-    drawScoreAndLevel();
-    if(paused) drawPaused();
+  if     (e.keyCode == 37) inputMoveLeft();    // left arrow
+  else if(e.keyCode == 38) inputRotateLeft();  // up arrow
+  else if(e.keyCode == 39) inputMoveRight();   // right arrow
+  else if(e.keyCode == 40) inputRotateRight(); // down arrow
+  else if(e.keyCode == 32) inputDrop();        // space-bar
+  else if(e.keyCode == 80) paused = !paused;   // p-key
+
+  drawTetrimino(x,y,t,o,1);
+  drawGrid();
+  drawScoreAndLevel();
+  if(paused) drawPaused();
+}
+
+function inputMoveLeft() {
+  drawTetrimino(x,y,t,o,0);  // Erase the current tetrimino
+  x2 = x - 1;
+  if(drawTetrimino(x2,y,t,o,-1)) // Check if valid
+    x = x2;
+}
+
+function inputRotateLeft() {
+  drawTetrimino(x,y,t,o,0);  // Erase the current tetrimino
+  o2 = (o + 1) % 4;
+  if(drawTetrimino(x,y,t,o2,-1)) // Check if valid
+    o = o2;
+}
+
+function inputMoveRight() {
+  drawTetrimino(x,y,t,o,0);  // Erase the current tetrimino
+  x2 = x + 1;
+  if(drawTetrimino(x2,y,t,o,-1)) // Check if valid
+    x = x2;
+}
+
+function inputRotateRight() {
+  drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
+  o2 = (o + 3) % 4;
+  if(drawTetrimino(x,y,t,o2,-1)) //Check if valid
+    o = o2;
+}
+
+function inputDrop() {
+  drawTetrimino(x,y,t,o,0);  //Erase the current tetrimino
+  //Move down until invalid
+  while(drawTetrimino(x,y-1,t,o,-1))
+    y -= 1;
+    gameStep();
 }
 
 /*************************************************
