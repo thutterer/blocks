@@ -22,9 +22,28 @@ Initialize the drawing canvas and start the game
 ************************************************/
 function initialize() {
     scaleCanvas();
-    addTouchListener();
-    ctx = document.getElementById("myCanvas").getContext("2d");
+    ctx = document.getElementById("gameCanvas").getContext("2d");
     startGame();
+    addTouchListener();
+    paused = true;
+}
+
+function showGame() {
+  document.getElementById("menu").style.display = 'none';
+  document.getElementById("gameCanvas").style.display = 'block';
+  document.getElementById("help").style.display = 'none';
+}
+
+function showHelp() {
+  document.getElementById("menu").style.display = 'none';
+  document.getElementById("gameCanvas").style.display = 'none';
+  document.getElementById("help").style.display = 'block';
+}
+
+function showMenu() {
+  document.getElementById("menu").style.display = 'block';
+  document.getElementById("gameCanvas").style.display = 'none';
+  document.getElementById("help").style.display = 'none';
 }
 
 /************************************************
@@ -43,10 +62,10 @@ function scaleCanvas() {
     canvasWidth = height/2
   }
   blockSize = canvasWidth/10;
-  document.getElementById("myCanvas").height = canvasHeight;
-  document.getElementById("myCanvas").width = canvasWidth;
-  document.getElementById("myCanvas").style.marginTop = (height-canvasHeight)/2+"px";
-  document.getElementById("myCanvas").style.marginLeft = (width-canvasWidth)/2+"px";
+  document.getElementById("gameCanvas").height = canvasHeight;
+  document.getElementById("gameCanvas").width = canvasWidth;
+  document.getElementById("gameCanvas").style.marginTop = (height-canvasHeight)/2+"px";
+  document.getElementById("gameCanvas").style.marginLeft = (width-canvasWidth)/2+"px";
 }
 
 function addTouchListener() {
@@ -82,20 +101,24 @@ function detectTouch(el, callback){
     handletouch = callback || function(gesture){}
 
     touchsurface.addEventListener('touchstart', function(e){
-        var touchobj = e.changedTouches[0]
-        gesture = 'none'
-        dist = 0
-        startX = touchobj.pageX
-        startY = touchobj.pageY
-        startTime = new Date().getTime() // record time when finger first makes contact with surface
-        e.preventDefault()
+      if(paused) return; // default click behaviour for game menu
+      var touchobj = e.changedTouches[0];
+      gesture = 'none';
+      dist = 0;
+      startX = touchobj.pageX;
+      startY = touchobj.pageY;
+      startTime = new Date().getTime(); // record time when finger first makes contact with surface
+      e.preventDefault();
     }, false)
 
     touchsurface.addEventListener('touchmove', function(e){
-        e.preventDefault() // prevent scrolling when inside DIV
+      if(paused) return; // default click behaviour for game menu
+      e.preventDefault();
     }, false)
 
     touchsurface.addEventListener('touchend', function(e){
+      if(paused) return; // default click behaviour for game menu
+
       var touchobj = e.changedTouches[0]
       distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
       distY = touchobj.pageY - startY // get vertical dist traveled by finger while in contact with surface
@@ -519,13 +542,15 @@ function inputDrop() {
 
 function togglePause() {
   paused = !paused;
+  if(paused) showMenu();
+  else showGame();
 }
 
 function redrawAfterInput() {
   drawTetrimino(x,y,t,o,1);
   drawGrid();
   drawScoreAndLevel();
-  if(paused) drawPaused();
+  //if(paused) drawPaused();
 }
 /*************************************************
 Updates the game state at regular intervals
@@ -618,12 +643,12 @@ function drawScoreAndLevel() {
 /*************************************************
 Draws text for paused mode
 *************************************************/
-function drawPaused() {
-  var fontSize = Math.floor(canvasHeight/20);
-  ctx.font = fontSize + "px Courier";
-  ctx.fillStyle = "white";
-  ctx.fillText("PAUSED", canvasWidth/4, canvasHeight/2-fontSize/2);
-}
+// function drawPaused() {
+//   var fontSize = Math.floor(canvasHeight/20);
+//   ctx.font = fontSize + "px Courier";
+//   ctx.fillStyle = "white";
+//   ctx.fillText("PAUSED", canvasWidth/4, canvasHeight/2-fontSize/2);
+// }
 
 /*************************************************
 Sets gameover state and draws its text

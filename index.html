@@ -5,9 +5,33 @@
   <title>Blocks</title>
   <link rel="stylesheet" type="text/css" href="tetris.css">
   <link rel="manifest" href="manifest.json">
+  <link href="https://fonts.googleapis.com/css?family=Bungee" rel="stylesheet">
   <script src="tetris.js"></script>
 </head>
 <body onLoad="initialize()" onkeydown="keyDown(event);">
-  <canvas id="myCanvas"></canvas>
+  <div id="menu">
+    <div class="title">
+      <span style="color: hsl(180,100%,50%);">B</span>
+      <span style="color: hsl(240,100%,50%);">L</span>
+      <span style="color: hsl(40,100%,50%);">O</span>
+      <span style="color: hsl(60,100%,50%);">C</span>
+      <span style="color: hsl(120,100%,50%);">K</span>
+      <span style="color: hsl(280,100%,50%);">S</span>
+      <span style="color: hsl(0,100%,50%);">!</span>
+    </div>
+    <ul>
+      <li class="clickable" onClick="togglePause()">play</li>
+      <li class="clickable" onClick="showHelp()">how to</li>
+    </ul>
+  </div>
+  <div id="help">
+    <div class="title">help</div>
+    swip to rotate</br>
+    touch the left or right half of the screen to move</br>
+    hold the bottom half of the screen to drop</br>
+    hold the top half of the screen to pause</br>
+    <div class="clickable" onclick="showMenu();">back</div>
+  </div>
+  <canvas id="gameCanvas"></canvas>
 </body>
 </html>

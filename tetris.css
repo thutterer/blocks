@@ -2,15 +2,48 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: black;
+  font-family: 'Bungee', cursive;
+  color: white;
+  text-align: center;
 }
 
 canvas {
+  display: none;
   /* height and width cannot be styled here!
      see http://stackoverflow.com/q/6757861/3449673
   */
-  background-color: gray;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-left-color: white;
+  border-right-color: : white;
+  border-radius: 2px;
 }
 
-#score {
-  width: 200px;
+#menu {
+  width: 100%;
+  font-size: 500%;
+}
+
+.title {
+  font-size: 200%;
+}
+
+#menu ul {
+  list-style-type: none;
+  padding: 50px;
+}
+
+.clickable {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.clickable:hover {
+  font-stretch: extra-expanded;
+  color: yellow;
+}
+
+#help {
+  display: none;
+  font-size: 300%;
 }
