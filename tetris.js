@@ -50,9 +50,68 @@ function scaleCanvas() {
 }
 
 function addTouchListener() {
-  document.getElementById("myCanvas").addEventListener('touchstart', function(e) {
-    inputDrop();
-  }, false);
+  detectTouch(document.body, function(gesture) {
+    if     (gesture == 'touch_left')  inputMoveLeft();
+    else if(gesture == 'touch_right') inputMoveRight();
+    else if(gesture == 'swipe_up'   || gesture == 'swipe_left')   inputRotateLeft();
+    else if(gesture == 'swipe_down' || gesture == 'swipe_right')  inputRotateRight();
+    else if(gesture == 'long_touch')  inputDrop();
+    redrawAfterInput();
+  });
+}
+
+/************************************************
+Detects touch gestures
+see http://www.javascriptkit.com/javatutors/touchevents2.shtml
+************************************************/
+function detectTouch(el, callback){
+    var touchsurface = el,
+    gesture,
+    startX,
+    startY,
+    distX,
+    distY,
+    threshold = 150, //required min distance traveled to be considered swipe
+    restraint = 100, // maximum distance allowed at the same time in perpendicular direction
+    allowedTime = 300, // maximum time allowed to travel that distance
+    elapsedTime,
+    startTime,
+    handletouch = callback || function(gesture){}
+
+    touchsurface.addEventListener('touchstart', function(e){
+        var touchobj = e.changedTouches[0]
+        gesture = 'none'
+        dist = 0
+        startX = touchobj.pageX
+        startY = touchobj.pageY
+        startTime = new Date().getTime() // record time when finger first makes contact with surface
+        e.preventDefault()
+    }, false)
+
+    touchsurface.addEventListener('touchmove', function(e){
+        e.preventDefault() // prevent scrolling when inside DIV
+    }, false)
+
+    touchsurface.addEventListener('touchend', function(e){
+      var touchobj = e.changedTouches[0]
+      distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
+      distY = touchobj.pageY - startY // get vertical dist traveled by finger while in contact with surface
+      elapsedTime = new Date().getTime() - startTime // get time elapsed
+      if (elapsedTime <= allowedTime) {
+        if (Math.abs(distX) < threshold && Math.abs(distY) < restraint){ // small distance means touch
+          gesture = startX < window.innerWidth/2 ? 'touch_left' : 'touch_right'
+        }
+        else if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){ // condition for horizontal swipe met
+          gesture = (distX < 0)? 'swipe_left' : 'swipe_right' // if dist traveled is negative, it indicates left swipe
+        }
+        else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint){ // condition for vertical swipe met
+          gesture = (distY < 0)? 'swipe_up' : 'swipe_down' // if dist traveled is negative, it indicates up swipe
+        }
+      }
+      else gesture = 'long_touch';
+      handletouch(gesture)
+      e.preventDefault()
+    }, false)
 }
 
 /************************************************
@@ -415,11 +474,7 @@ function keyDown(e) {
   else if(e.keyCode == 40) inputRotateRight(); // down arrow
   else if(e.keyCode == 32) inputDrop();        // space-bar
   else if(e.keyCode == 80) paused = !paused;   // p-key
-
-  drawTetrimino(x,y,t,o,1);
-  drawGrid();
-  drawScoreAndLevel();
-  if(paused) drawPaused();
+  redrawAfterInput();
 }
 
 function inputMoveLeft() {
@@ -458,6 +513,12 @@ function inputDrop() {
     gameStep();
 }
 
+function redrawAfterInput() {
+  drawTetrimino(x,y,t,o,1);
+  drawGrid();
+  drawScoreAndLevel();
+  if(paused) drawPaused();
+}
 /*************************************************
 Updates the game state at regular intervals
 *************************************************/
