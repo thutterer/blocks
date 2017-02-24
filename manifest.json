@@ -1,0 +1,15 @@
+{
+  "short_name": "Blocks",
+  "name": "Blocks",
+  "icons": [
+    {
+      "src": "blocks.png",
+      "sizes": "166x166",
+      "type": "image/png"
+    }
+  ],
+
+  "start_url": "/blocks/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}
