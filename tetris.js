@@ -45,11 +45,10 @@ function showMenu() {
 }
 
 function createField() {
-  var game = document.getElementById('game');
+  var game = document.getElementById('grid');
   for (var y = 19; y >= 0; y--) {
     for (var x = 0; x < 10; x++) {
       var div = document.createElement('div');
-      div.setAttribute("class", "block y"+y + " x"+x);
       game.appendChild(div)
     }
   }
@@ -171,6 +170,7 @@ function startGame() {
   score = 0;
   level = 1;
   drawScoreAndLevel();
+  document.getElementById("flash").style.opacity = 0;
   //Start the game timer
   timestep = 1000;
   paused = false;
@@ -185,8 +185,9 @@ Draws the current game state grid
 function drawGrid() {
   // clear the field
   var blocks = document.getElementsByClassName("block");
-  for (var i = 0; i < blocks.length; i++) {
-    blocks[i].style.backgroundColor="black";
+  var l = blocks.length
+  for (var i = 0; i < l; i++) {
+    blocks[0].className = ""; 
   }
   // loop over each grid cell
   for(i = 0; i < 20; i++) {
@@ -218,7 +219,7 @@ function drawBlock(x, y, t) {
       c = 'purple';
     else            //Z type
       c = 'red';
-    document.getElementsByClassName("y"+y + " x"+x)[0].style.backgroundColor = c;
+    document.getElementById("grid").children[(19-y)*10+x].className = c + " block";
   }
 }
 
@@ -552,7 +553,7 @@ function checkLines() {
       full = full && (grid[i][j] > 0);
     if(full) {
       //Increase score
-      score++;
+      score = score + level;
       //Check if ready for the next level
       if(score >= level*10) {
         level++;
@@ -580,11 +581,8 @@ function checkLines() {
 Draws the current score and level
 *************************************************/
 function drawScoreAndLevel() {
-//  var fontSize = Math.floor(canvasHeight/50);
-//  ctx.font = fontSize + "px Courier";
-//  ctx.fillStyle = "white";
-//  ctx.fillText("Score: " + score, 5, fontSize*1.25);
-//  ctx.fillText("Level: " + level, 5, fontSize*2.5);
+  document.getElementById("score").innerHTML = "Score: " + score;
+  document.getElementById("level").innerHTML = "Level: " + level;
 }
 
 /*************************************************
@@ -601,9 +599,8 @@ Draws text for paused mode
 Sets gameover state and draws its text
 *************************************************/
 function setAndDrawGameover() {
-//  var fontSize = Math.floor(canvasHeight/20);
-//  gameover = true;
-//  ctx.font = fontSize + "px Courier";
-//  ctx.fillStyle = "white";
-//  ctx.fillText("GAME OVER", canvasWidth/5, canvasHeight/2-fontSize/2);
+  gameover = true;
+  flash = document.getElementById("flash");
+  flash.innerHTML = "Game Over";
+  flash.style.opacity = "1.0";
 }
