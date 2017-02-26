@@ -12,6 +12,53 @@ body {
   text-align: center;
 }
 
+#game {
+  display: none;
+  height: 100%;
+}
+
+#game table {
+  height: 100%;
+  width: 100%;
+}
+
+table, td {
+  border: 1px solid white;
+}
+
+tr {
+  height: 5%;
+}
+
+//.cyan {
+//  background-color: cyan;
+//}
+//
+//.blue {
+//  background-color: blue;
+//}
+//
+//.orange {
+//  background-color: orange;
+//}
+//
+//.yellow {
+//  background-color: red;
+//}
+//
+//.green {
+//  background-color: red;
+//}
+//
+//.purple {
+//  background-color: red;
+//}
+//
+//.red {
+//  background-color: red;
+//}
+
+
 canvas {
   display: none;
   /* height and width cannot be styled here!

@@ -1,5 +1,4 @@
 //Golbal variables
-var ctx;        // Canvas object
 var grid;       // Game state grid
 
 var t;          // Tetrimino type
@@ -22,7 +21,6 @@ Initialize the drawing canvas and start the game
 ************************************************/
 function initialize() {
   scaleCanvas();
-  ctx = document.getElementById("gameCanvas").getContext("2d");
   startGame();
   addTouchListener();
   paused = true;
@@ -30,19 +28,19 @@ function initialize() {
 
 function showGame() {
   document.getElementById("menu").style.display = 'none';
-  document.getElementById("gameCanvas").style.display = 'block';
+  document.getElementById("game").style.display = 'block';
   document.getElementById("help").style.display = 'none';
 }
 
 function showHelp() {
   document.getElementById("menu").style.display = 'none';
-  document.getElementById("gameCanvas").style.display = 'none';
+  document.getElementById("game").style.display = 'none';
   document.getElementById("help").style.display = 'block';
 }
 
 function showMenu() {
   document.getElementById("menu").style.display = 'block';
-  document.getElementById("gameCanvas").style.display = 'none';
+  document.getElementById("game").style.display = 'none';
   document.getElementById("help").style.display = 'none';
 }
 
@@ -50,6 +48,22 @@ function showMenu() {
 Scale the drawing canvas to fit into window
 ************************************************/
 function scaleCanvas() {
+
+// TODO rename CREATE
+  var body = document.getElementById('game');
+  var tbl = document.createElement('table');
+  var tbdy = document.createElement('tbody');
+  for (var i = 0; i < 20; i++) {
+    var tr = document.createElement('tr');
+    for (var j = 0; j < 10; j++) {
+      var td = document.createElement('td');
+      tr.appendChild(td)
+    }
+    tbdy.appendChild(tr);
+  }
+  tbl.appendChild(tbdy);
+  body.appendChild(tbl)
+
   var width = window.innerWidth;
   var height = window.innerHeight;
 
@@ -62,10 +76,10 @@ function scaleCanvas() {
     canvasWidth = height/2
   }
   blockSize = canvasWidth/10;
-  document.getElementById("gameCanvas").height = canvasHeight;
-  document.getElementById("gameCanvas").width = canvasWidth;
-  document.getElementById("gameCanvas").style.marginTop = (height-canvasHeight)/2+"px";
-  document.getElementById("gameCanvas").style.marginLeft = (width-canvasWidth)/2+"px";
+  document.getElementById("game").height = canvasHeight;
+  document.getElementById("game").width = canvasWidth;
+  document.getElementById("game").style.marginTop = (height-canvasHeight)/2+"px";
+  document.getElementById("game").style.marginLeft = (width-canvasWidth)/2+"px";
 }
 
 function addTouchListener() {
@@ -176,8 +190,9 @@ function startGame() {
 Draws the current game state grid
 ************************************************/
 function drawGrid() {
+  $("td").css("background-color", "black");
   //Clear the canvas
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  //ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   //Loop over each grid cell
   for(i = 0; i < 20; i++) {
     for(j = 0; j < 10; j++)
@@ -192,75 +207,96 @@ y = [0,19]  y-coordinate
 t = [0,7]   block type
 ************************************************/
 function drawBlock(x, y, t) {
-  //Check if a block needs to be drawn
+  var c;
   if(t > 0) {
-   //Get the block color
-    var c;
     if(t == 1)        //I type
-      c = 180;    //Cyan
+      c = 'cyan';    //Cyan
     else if(t == 2)    //J type
-      c = 240;    //Blue
+      c = 'blue';
     else if(t == 3)    //L type
-      c = 40;        //Orange
+      c = 'orange';
     else if(t == 4)    //O type
-      c = 60;        //Yellow
+      c = 'yellow';
     else if(t == 5) //S type
-      c = 120;    //Green
+      c = 'green';
     else if(t == 6) //T type
-      c = 280;    //Purple
+      c = 'purple';
     else            //Z type
-      c = 0;        //Red
-    //Convert game coordinaes to pixel coordinates
-    pixelX = x*blockSize;
-    pixelY = (19-y)*blockSize;
-
-    /**** Draw the center part of the block ****/
-    //Set the fill color using the supplied color
-    ctx.fillStyle = "hsl(" + c + ",100%,50%)";
-    //Create a filled rectangle
-    ctx.fillRect(pixelX+2, pixelY+2, blockSize-2, blockSize-2);
-
-    /**** Draw the top part of the block ****/
-    //Set the fill color slightly lighter
-    ctx.fillStyle = "hsl(" + c + ",100%,70%)";
-    //Create the top polygon and fill it
-    ctx.beginPath();
-    ctx.moveTo(pixelX, pixelY);
-    ctx.lineTo(pixelX+blockSize, pixelY);
-    ctx.lineTo(pixelX+blockSize-2,pixelY+2);
-    ctx.lineTo(pixelX+2, pixelY+2);
-    ctx.fill();
-
-    /**** Draw the sides of the block ****/
-    //Set the fill color slightly darker
-    ctx.fillStyle = "hsl(" + c + ",100%,40%)";
-    //Create the left polygon and fill it
-    ctx.beginPath();
-    ctx.moveTo(pixelX, pixelY);
-    ctx.lineTo(pixelX, pixelY+blockSize);
-    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
-    ctx.lineTo(pixelX+2,pixelY+2);
-    ctx.fill();
-
-    //Create the right polygon and fill it
-    ctx.beginPath();
-    ctx.moveTo(pixelX+blockSize, pixelY);
-    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
-    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
-    ctx.lineTo(pixelX+blockSize-2, pixelY+2);
-    ctx.fill();
-
-    /**** Draw the bottom part of the block ****/
-    //Set the fill color much darker
-    ctx.fillStyle = "hsl(" + c + ",100%,30%)";
-    //Create the bottom polygon and fill it
-    ctx.beginPath();
-    ctx.moveTo(pixelX, pixelY+blockSize);
-    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
-    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
-    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
-    ctx.fill();
+      c = 'red';
+    $("#game table tr:eq("+(19-y)+") td:eq("+x+")").css("background-color", c);
+    console.log(c);
   }
+
+
+//  //Check if a block needs to be drawn
+//  if(t > 0) {
+//   //Get the block color
+//    var c;
+//    if(t == 1)        //I type
+//      c = 180;    //Cyan
+//    else if(t == 2)    //J type
+//      c = 240;    //Blue
+//    else if(t == 3)    //L type
+//      c = 40;        //Orange
+//    else if(t == 4)    //O type
+//      c = 60;        //Yellow
+//    else if(t == 5) //S type
+//      c = 120;    //Green
+//    else if(t == 6) //T type
+//      c = 280;    //Purple
+//    else            //Z type
+//      c = 0;        //Red
+//    //Convert game coordinaes to pixel coordinates
+//    pixelX = x*blockSize;
+//    pixelY = (19-y)*blockSize;
+//
+//    /**** Draw the center part of the block ****/
+//    //Set the fill color using the supplied color
+//    ctx.fillStyle = "hsl(" + c + ",100%,50%)";
+//    //Create a filled rectangle
+//    ctx.fillRect(pixelX+2, pixelY+2, blockSize-2, blockSize-2);
+//
+//    /**** Draw the top part of the block ****/
+//    //Set the fill color slightly lighter
+//    ctx.fillStyle = "hsl(" + c + ",100%,70%)";
+//    //Create the top polygon and fill it
+//    ctx.beginPath();
+//    ctx.moveTo(pixelX, pixelY);
+//    ctx.lineTo(pixelX+blockSize, pixelY);
+//    ctx.lineTo(pixelX+blockSize-2,pixelY+2);
+//    ctx.lineTo(pixelX+2, pixelY+2);
+//    ctx.fill();
+//
+//    /**** Draw the sides of the block ****/
+//    //Set the fill color slightly darker
+//    ctx.fillStyle = "hsl(" + c + ",100%,40%)";
+//    //Create the left polygon and fill it
+//    ctx.beginPath();
+//    ctx.moveTo(pixelX, pixelY);
+//    ctx.lineTo(pixelX, pixelY+blockSize);
+//    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
+//    ctx.lineTo(pixelX+2,pixelY+2);
+//    ctx.fill();
+//
+//    //Create the right polygon and fill it
+//    ctx.beginPath();
+//    ctx.moveTo(pixelX+blockSize, pixelY);
+//    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
+//    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
+//    ctx.lineTo(pixelX+blockSize-2, pixelY+2);
+//    ctx.fill();
+//
+//    /**** Draw the bottom part of the block ****/
+//    //Set the fill color much darker
+//    ctx.fillStyle = "hsl(" + c + ",100%,30%)";
+//    //Create the bottom polygon and fill it
+//    ctx.beginPath();
+//    ctx.moveTo(pixelX, pixelY+blockSize);
+//    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
+//    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
+//    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
+//    ctx.fill();
+//  }
 }
 
 /*************************************************
@@ -621,11 +657,11 @@ function checkLines() {
 Draws the current score and level
 *************************************************/
 function drawScoreAndLevel() {
-  var fontSize = Math.floor(canvasHeight/50);
-  ctx.font = fontSize + "px Courier";
-  ctx.fillStyle = "white";
-  ctx.fillText("Score: " + score, 5, fontSize*1.25);
-  ctx.fillText("Level: " + level, 5, fontSize*2.5);
+//  var fontSize = Math.floor(canvasHeight/50);
+//  ctx.font = fontSize + "px Courier";
+//  ctx.fillStyle = "white";
+//  ctx.fillText("Score: " + score, 5, fontSize*1.25);
+//  ctx.fillText("Level: " + level, 5, fontSize*2.5);
 }
 
 /*************************************************
@@ -642,9 +678,9 @@ Draws text for paused mode
 Sets gameover state and draws its text
 *************************************************/
 function setAndDrawGameover() {
-  var fontSize = Math.floor(canvasHeight/20);
-  gameover = true;
-  ctx.font = fontSize + "px Courier";
-  ctx.fillStyle = "white";
-  ctx.fillText("GAME OVER", canvasWidth/5, canvasHeight/2-fontSize/2);
+//  var fontSize = Math.floor(canvasHeight/20);
+//  gameover = true;
+//  ctx.font = fontSize + "px Courier";
+//  ctx.fillStyle = "white";
+//  ctx.fillText("GAME OVER", canvasWidth/5, canvasHeight/2-fontSize/2);
 }

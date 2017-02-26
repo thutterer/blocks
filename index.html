@@ -6,6 +6,7 @@
   <link rel="stylesheet" type="text/css" href="tetris.css">
   <link rel="manifest" href="manifest.json">
   <link href="https://fonts.googleapis.com/css?family=Bungee" rel="stylesheet">
+  <script src="jquery-3.1.1.min.js"></script>
   <script src="tetris.js"></script>
 </head>
 <body onLoad="initialize()" onkeydown="keyDown(event);">
@@ -27,12 +28,12 @@
   </div>
   <div id="help">
     <div class="title">help</div>
-    <p>swip to rotate</p>
+    <p>swipe to rotate</p>
     <p>touch the upper left or right of the screen to move</p>
     <p>touch the bottom quarter of the screen to drop</p>
     <p>touch and hold to pause</p>
     <div class="clickable" onclick="showMenu();">back</div>
   </div>
-  <canvas id="gameCanvas"></canvas>
+  <div id="game"></div>
 </body>
 </html>
