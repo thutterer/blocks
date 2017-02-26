@@ -15,19 +15,18 @@ body {
 #game {
   display: none;
   height: 100%;
+  line-height: 0px;
 }
 
-#game table {
-  height: 100%;
-  width: 100%;
-}
-
-table, td {
-  border: 1px solid white;
-}
-
-tr {
+#game div {
+  width: 10%;
   height: 5%;
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+  -moz-box-shadow: inset 2px 2px 2px rgba(255, 255, 255, .4), inset -2px -2px 2px rgba(0, 0, 0, .4);
+  -webkit-box-shadow: inset 2px 2px 2px rgba(255, 255, 255, .4), inset -2px -2px 2px rgba(0, 0, 0, .4);
+  box-shadow: inset 2px 2px 2px rgba(255, 255, 255, .4), inset -2px -2px 2px rgba(0, 0, 0, .4);
 }
 
 //.cyan {

@@ -20,7 +20,7 @@ var gameover;   // Gameover state
 Initialize the drawing canvas and start the game
 ************************************************/
 function initialize() {
-  scaleCanvas();
+  createField();
   startGame();
   addTouchListener();
   paused = true;
@@ -44,25 +44,15 @@ function showMenu() {
   document.getElementById("help").style.display = 'none';
 }
 
-/************************************************
-Scale the drawing canvas to fit into window
-************************************************/
-function scaleCanvas() {
-
-// TODO rename CREATE
-  var body = document.getElementById('game');
-  var tbl = document.createElement('table');
-  var tbdy = document.createElement('tbody');
-  for (var i = 0; i < 20; i++) {
-    var tr = document.createElement('tr');
-    for (var j = 0; j < 10; j++) {
-      var td = document.createElement('td');
-      tr.appendChild(td)
+function createField() {
+  var game = document.getElementById('game');
+  for (var y = 19; y >= 0; y--) {
+    for (var x = 0; x < 10; x++) {
+      var div = document.createElement('div');
+      div.setAttribute("class", "block y"+y + " x"+x);
+      game.appendChild(div)
     }
-    tbdy.appendChild(tr);
   }
-  tbl.appendChild(tbdy);
-  body.appendChild(tbl)
 
   var width = window.innerWidth;
   var height = window.innerHeight;
@@ -76,10 +66,13 @@ function scaleCanvas() {
     canvasWidth = height/2
   }
   blockSize = canvasWidth/10;
+
+  // TODO make this better :D
   document.getElementById("game").height = canvasHeight;
   document.getElementById("game").width = canvasWidth;
   document.getElementById("game").style.marginTop = (height-canvasHeight)/2+"px";
   document.getElementById("game").style.marginLeft = (width-canvasWidth)/2+"px";
+  document.getElementById("game").style.marginRight = (width-canvasWidth)/2+"px";
 }
 
 function addTouchListener() {
@@ -190,10 +183,12 @@ function startGame() {
 Draws the current game state grid
 ************************************************/
 function drawGrid() {
-  $("td").css("background-color", "black");
-  //Clear the canvas
-  //ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  //Loop over each grid cell
+  // clear the field
+  var blocks = document.getElementsByClassName("block");
+  for (var i = 0; i < blocks.length; i++) {
+    blocks[i].style.backgroundColor="black";
+  }
+  // loop over each grid cell
   for(i = 0; i < 20; i++) {
     for(j = 0; j < 10; j++)
       drawBlock(j, i, grid[i][j]);
@@ -223,80 +218,8 @@ function drawBlock(x, y, t) {
       c = 'purple';
     else            //Z type
       c = 'red';
-    $("#game table tr:eq("+(19-y)+") td:eq("+x+")").css("background-color", c);
-    console.log(c);
+    document.getElementsByClassName("y"+y + " x"+x)[0].style.backgroundColor = c;
   }
-
-
-//  //Check if a block needs to be drawn
-//  if(t > 0) {
-//   //Get the block color
-//    var c;
-//    if(t == 1)        //I type
-//      c = 180;    //Cyan
-//    else if(t == 2)    //J type
-//      c = 240;    //Blue
-//    else if(t == 3)    //L type
-//      c = 40;        //Orange
-//    else if(t == 4)    //O type
-//      c = 60;        //Yellow
-//    else if(t == 5) //S type
-//      c = 120;    //Green
-//    else if(t == 6) //T type
-//      c = 280;    //Purple
-//    else            //Z type
-//      c = 0;        //Red
-//    //Convert game coordinaes to pixel coordinates
-//    pixelX = x*blockSize;
-//    pixelY = (19-y)*blockSize;
-//
-//    /**** Draw the center part of the block ****/
-//    //Set the fill color using the supplied color
-//    ctx.fillStyle = "hsl(" + c + ",100%,50%)";
-//    //Create a filled rectangle
-//    ctx.fillRect(pixelX+2, pixelY+2, blockSize-2, blockSize-2);
-//
-//    /**** Draw the top part of the block ****/
-//    //Set the fill color slightly lighter
-//    ctx.fillStyle = "hsl(" + c + ",100%,70%)";
-//    //Create the top polygon and fill it
-//    ctx.beginPath();
-//    ctx.moveTo(pixelX, pixelY);
-//    ctx.lineTo(pixelX+blockSize, pixelY);
-//    ctx.lineTo(pixelX+blockSize-2,pixelY+2);
-//    ctx.lineTo(pixelX+2, pixelY+2);
-//    ctx.fill();
-//
-//    /**** Draw the sides of the block ****/
-//    //Set the fill color slightly darker
-//    ctx.fillStyle = "hsl(" + c + ",100%,40%)";
-//    //Create the left polygon and fill it
-//    ctx.beginPath();
-//    ctx.moveTo(pixelX, pixelY);
-//    ctx.lineTo(pixelX, pixelY+blockSize);
-//    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
-//    ctx.lineTo(pixelX+2,pixelY+2);
-//    ctx.fill();
-//
-//    //Create the right polygon and fill it
-//    ctx.beginPath();
-//    ctx.moveTo(pixelX+blockSize, pixelY);
-//    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
-//    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
-//    ctx.lineTo(pixelX+blockSize-2, pixelY+2);
-//    ctx.fill();
-//
-//    /**** Draw the bottom part of the block ****/
-//    //Set the fill color much darker
-//    ctx.fillStyle = "hsl(" + c + ",100%,30%)";
-//    //Create the bottom polygon and fill it
-//    ctx.beginPath();
-//    ctx.moveTo(pixelX, pixelY+blockSize);
-//    ctx.lineTo(pixelX+blockSize, pixelY+blockSize);
-//    ctx.lineTo(pixelX+blockSize-2, pixelY+blockSize-2);
-//    ctx.lineTo(pixelX+2,pixelY+blockSize-2);
-//    ctx.fill();
-//  }
 }
 
 /*************************************************
