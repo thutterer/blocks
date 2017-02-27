@@ -4,6 +4,7 @@ var grid;       // Game state grid
 var t;          // Tetrimino type
 var x, y;       // Tetrimino position
 var o;          // Tetrimino orientation
+var next_t;     // Type of next Tetrimino
 
 var canvasWidth;    // Calculated canvas width in pixel
 var canvasHeight;   // Calculated canvas height in pixel
@@ -15,11 +16,14 @@ var level;      // Current level
 var paused;     // Game pause state
 var gameover;   // Gameover state
 
+var soundRow = new Audio('row.ogg');
+
 /************************************************
 Initialize the drawing canvas and start the game
 ************************************************/
 function initialize() {
   createField();
+  createPreviewField();
   startGame();
   addTouchListener();
   paused = true;
@@ -44,11 +48,11 @@ function showMenu() {
 }
 
 function createField() {
-  var game = document.getElementById('grid');
+  var grid = document.getElementById('grid');
   for (var y = 19; y >= 0; y--) {
     for (var x = 0; x < 10; x++) {
       var div = document.createElement('div');
-      game.appendChild(div)
+      grid.appendChild(div)
     }
   }
 
@@ -71,6 +75,22 @@ function createField() {
   document.getElementById("game").style.marginBottom = (height-canvasHeight)/2+"px";
   document.getElementById("game").style.marginLeft = (width-canvasWidth)/2+"px";
   document.getElementById("game").style.marginRight = (width-canvasWidth)/2+"px";
+}
+
+function createPreviewField() {
+  var next = document.getElementById('next');
+  var preview = document.createElement('div');
+  preview.setAttribute("id", "preview");
+  preview.style.width = canvasHeight / 20 * 4 +"px";
+  for (var y = 1; y >= 0; y--) {
+    for (var x = 0; x <= 3; x++) {
+      var div = document.createElement('div');
+      div.style.height = canvasHeight / 20 +"px";
+      div.style.width = canvasWidth / 10 +"px";
+      preview.appendChild(div)
+    }
+  }
+  next.appendChild(preview);
 }
 
 function addTouchListener() {
@@ -152,10 +172,12 @@ Reset everything to (re)start the game
 function startGame() {
   //Initialize tetrimino variables
   t = 1 + Math.floor((Math.random()*7));
+  next_t = 1 + Math.floor((Math.random()*7));
   x = 4;
   y = 18;
   o = 0;
   //Create an empty game state grid
+  // TODO I think this loop is duplicated and could go to a method
   grid = new Array(20);
   for(i = 0; i < 20; i++) {
     grid[i] = new Array(10);
@@ -169,6 +191,7 @@ function startGame() {
   score = 0;
   level = 1;
   drawScoreAndLevel();
+  drawNextTetrimino();
   document.getElementById("flash").style.opacity = 0;
   //Start the game timer
   timestep = 1000;
@@ -183,10 +206,10 @@ Draws the current game state grid
 ************************************************/
 function drawGrid() {
   // clear the field
-  var blocks = document.getElementsByClassName("block");
+  var blocks = document.getElementById("grid").children;
   var l = blocks.length
   for (var i = 0; i < l; i++) {
-    blocks[0].className = "";
+    blocks[i].className = "";
   }
   // loop over each grid cell
   for(i = 0; i < 20; i++) {
@@ -204,19 +227,19 @@ t = [0,7]   block type
 function drawBlock(x, y, t) {
   var c;
   if(t > 0) {
-    if(t == 1)        //I type
-      c = 'cyan';    //Cyan
+    if(t == 1)         //I type
+      c = 'cyan';
     else if(t == 2)    //J type
       c = 'blue';
     else if(t == 3)    //L type
       c = 'orange';
     else if(t == 4)    //O type
       c = 'yellow';
-    else if(t == 5) //S type
+    else if(t == 5)    //S type
       c = 'green';
-    else if(t == 6) //T type
+    else if(t == 6)    //T type
       c = 'purple';
-    else            //Z type
+    else               //Z type
       c = 'red';
     document.getElementById("grid").children[(19-y)*10+x].className = c + " block";
   }
@@ -499,6 +522,7 @@ function redrawAfterInput() {
   drawScoreAndLevel();
   //if(paused) drawPaused();
 }
+
 /*************************************************
 Updates the game state at regular intervals
 *************************************************/
@@ -517,16 +541,19 @@ function gameStep() {
     //Check if any lines are complete
     checkLines();
     //Create a new tetrimino
-    t2 = 1 + Math.floor((Math.random()*7));
+    t2 = next_t;
     x2 = 4;
     y2 = 18;
     o2 = 0;
+    next_t = 1 + Math.floor((Math.random()*7));
+    drawNextTetrimino();
     //Check if valid
     if(drawTetrimino(x2,y2,t2,o2,-1)) {
       t = t2;
       x = x2;
       y = y2;
       o = o2;
+      //document.getElementById("grid").style.boxShadow = "inset 0px 0px 100px 50px "+ blockColor(t);
     }
     else {
       setAndDrawGameover();
@@ -540,11 +567,65 @@ function gameStep() {
   drawScoreAndLevel();
 }
 
+function blockColor(t) {
+  return ['cyan', 'blue', 'orange', 'yellow', 'green', 'purple', 'red'][t-1];
+}
+
+function drawNextTetrimino() {
+  preview = document.getElementById("preview").children;
+  for(i = 0; i < preview.length; i++) {
+    preview[i].className = "";
+  }
+  if(next_t == 1) {         //I type
+    preview[4].className = "cyan block";
+    preview[5].className = "cyan block";
+    preview[6].className = "cyan block";
+    preview[7].className = "cyan block";
+  }
+  else if(next_t == 2) {    //J type
+    preview[0].className = "blue block";
+    preview[4].className = "blue block";
+    preview[5].className = "blue block";
+    preview[6].className = "blue block";
+  }
+  else if(next_t == 3) {    //L type
+    preview[2].className = "orange block";
+    preview[4].className = "orange block";
+    preview[5].className = "orange block";
+    preview[6].className = "orange block";
+  }
+  else if(next_t == 4) {    //O type
+    preview[1].className = "yellow block";
+    preview[2].className = "yellow block";
+    preview[5].className = "yellow block";
+    preview[6].className = "yellow block";
+  }
+  else if(next_t == 5) {    //S type
+    preview[1].className = "green block";
+    preview[2].className = "green block";
+    preview[4].className = "green block";
+    preview[5].className = "green block";
+  }
+  else if(next_t == 6) {    //T type
+    preview[1].className = "purple block";
+    preview[4].className = "purple block";
+    preview[5].className = "purple block";
+    preview[6].className = "purple block";
+  }
+  else {                    //Z type
+    preview[0].className = "red block";
+    preview[1].className = "red block";
+    preview[5].className = "red block";
+    preview[6].className = "red block";
+  }
+}
+
 /*************************************************
 Removes completed lines from the grid
 *************************************************/
 function checkLines() {
   document.getElementById("level").className = "";
+  var cleared_at_least_one_line = false;
 
    //Loop over each line in the grid
   for(i = 0; i < 20; i++) {
@@ -553,6 +634,7 @@ function checkLines() {
     for(j = 0; j < 10; j++)
       full = full && (grid[i][j] > 0);
     if(full) {
+      cleared_at_least_one_line = true;
       //Increase score
       score = score + level;
       //Check if ready for the next level
@@ -577,25 +659,16 @@ function checkLines() {
       i--;
     }
   }
+  if(cleared_at_least_one_line) soundRow.play();
 }
 
 /*************************************************
 Draws the current score and level
 *************************************************/
 function drawScoreAndLevel() {
-  document.getElementById("score").innerHTML = "Score: " + score;
+  document.getElementById("score").innerHTML = score;
   document.getElementById("level").innerHTML = "Level " + level;
 }
-
-/*************************************************
-Draws text for paused mode
-*************************************************/
-// function drawPaused() {
-//   var fontSize = Math.floor(canvasHeight/20);
-//   ctx.font = fontSize + "px Courier";
-//   ctx.fillStyle = "white";
-//   ctx.fillText("PAUSED", canvasWidth/4, canvasHeight/2-fontSize/2);
-// }
 
 /*************************************************
 Sets gameover state and draws its text
@@ -604,5 +677,5 @@ function setAndDrawGameover() {
   gameover = true;
   flash = document.getElementById("flash");
   flash.innerHTML = "Game Over";
-  flash.style.opacity = "1.0";
+  flash.style.opacity = "1";
 }
