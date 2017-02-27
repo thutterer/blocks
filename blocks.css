@@ -1,0 +1,165 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background-color: black;
+  font-family: 'Bungee', cursive;
+  color: white;
+  text-align: center;
+}
+
+#game {
+  position: relative;
+  display: none;
+  height: 100%;
+  font-size: 200%;
+}
+
+#grid {
+  height: 100%;
+  line-height: 0px;
+  background: rgba(38,38,38,1);
+  transition: box-shadow 1s;
+}
+
+#score, #next, #audio {
+  background-color: rgba(100,100,100,0.4);
+  position: fixed;
+  padding: 1%;
+  top: 30px;
+}
+
+#score {
+  left: 10px;
+  min-width: 100px;
+  text-align: right;
+}
+
+#next {
+  right: 10px;
+  text-align: right;
+}
+
+audio {
+  top: 60px;
+  left: 10px;
+}
+
+#preview {
+  width: 200px;
+  line-height: 0px;
+}
+
+#preview div {
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+#level.up {
+  animation-name: flash;
+  animation-duration: 1s;
+}
+
+@keyframes flash {
+  50% {opacity: 1;}
+}
+
+#flash, #level {
+  position: absolute;
+  top: 50%;
+  height: 200px;
+  margin-top: -100px;
+  line-height: 200px;
+  opacity: 0;
+  width: 90%;
+  margin-left: 5%;
+  text-align: center;
+  font-size: 200%;
+  background-color: rgba(100,100,100,0.4);
+}
+
+#grid div {
+  width: 10%;
+  height: 5%;
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+.block {
+  box-shadow: inset 10px 10px 2px rgba(255, 255, 255, .4), inset -10px -10px 2px rgba(0, 0, 0, .4);
+}
+
+.cyan {
+  background-color: cyan;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.orange {
+  background-color: orange;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.green {
+  background-color: green;
+}
+
+.purple {
+  background-color: purple;
+}
+
+.red {
+  background-color: red;
+}
+
+a, a:visited {
+  text-decoration: none;
+  color: white;
+}
+
+#menu {
+  width: 100%;
+  height: 100%;
+  font-size: 500%;
+}
+
+.title {
+  font-size: 200%;
+}
+
+#menu ul {
+  list-style-type: none;
+  padding: 50px;
+}
+
+#footer {
+  position: fixed;
+  width: 100%;
+  font-size: 40%;
+  bottom: 0px;
+}
+
+.clickable {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.clickable:hover {
+  color: yellow;
+}
+
+#help {
+  display: none;
+  font-size: 300%;
+}
