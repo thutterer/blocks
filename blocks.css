@@ -22,26 +22,31 @@ body {
 #grid {
   height: 100%;
   line-height: 0px;
-  background: -moz-linear-gradient(white, gray); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(white, gray); /* Standard syntax */
+  background: rgba(38,38,38,1);
+  box-shadow: 0px 0px 118px 90px rgba(38,38,38,1);
 }
 
-#score, #level {
+#score {
   background-color: rgba(100,100,100,0.4);
   position: fixed;
   padding: 1%;
   top: 30px;
-}
-
-#score {
   left: 10px;
 }
 
-#level {
-  right: 10px;
+#score {
 }
 
-#flash {
+#level.up {
+  animation-name: flash;
+  animation-duration: 1s;
+}
+
+@keyframes flash {
+  50% {opacity: 1;}
+}
+
+#flash, #level {
   position: absolute;
   top: 50%;
   height: 200px;

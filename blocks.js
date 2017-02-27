@@ -1,4 +1,4 @@
-//Golbal variables
+// global variables
 var grid;       // Game state grid
 
 var t;          // Tetrimino type
@@ -7,7 +7,6 @@ var o;          // Tetrimino orientation
 
 var canvasWidth;    // Calculated canvas width in pixel
 var canvasHeight;   // Calculated canvas height in pixel
-var blockSize;      // Calculated block size in pixel
 
 var timer;      // Game timer
 var timestep;   // Time between calls to gameStep()
@@ -64,12 +63,12 @@ function createField() {
     canvasHeight = height;
     canvasWidth = height/2
   }
-  blockSize = canvasWidth/10;
 
   // TODO make this better :D
-  document.getElementById("game").height = canvasHeight;
-  document.getElementById("game").width = canvasWidth;
+  document.getElementById("game").style.height = canvasHeight+"px";
+  document.getElementById("game").style.width = canvasWidth+"px";
   document.getElementById("game").style.marginTop = (height-canvasHeight)/2+"px";
+  document.getElementById("game").style.marginBottom = (height-canvasHeight)/2+"px";
   document.getElementById("game").style.marginLeft = (width-canvasWidth)/2+"px";
   document.getElementById("game").style.marginRight = (width-canvasWidth)/2+"px";
 }
@@ -187,7 +186,7 @@ function drawGrid() {
   var blocks = document.getElementsByClassName("block");
   var l = blocks.length
   for (var i = 0; i < l; i++) {
-    blocks[0].className = ""; 
+    blocks[0].className = "";
   }
   // loop over each grid cell
   for(i = 0; i < 20; i++) {
@@ -545,6 +544,8 @@ function gameStep() {
 Removes completed lines from the grid
 *************************************************/
 function checkLines() {
+  document.getElementById("level").className = "";
+
    //Loop over each line in the grid
   for(i = 0; i < 20; i++) {
     //Check if the line is full
@@ -557,6 +558,7 @@ function checkLines() {
       //Check if ready for the next level
       if(score >= level*10) {
         level++;
+        document.getElementById("level").className = "up";
         //Update the timer with a shorter timestep
         timestep *= 0.8;
         clearInterval(timer);
@@ -582,7 +584,7 @@ Draws the current score and level
 *************************************************/
 function drawScoreAndLevel() {
   document.getElementById("score").innerHTML = "Score: " + score;
-  document.getElementById("level").innerHTML = "Level: " + level;
+  document.getElementById("level").innerHTML = "Level " + level;
 }
 
 /*************************************************
